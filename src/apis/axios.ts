@@ -1,4 +1,4 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { handleApiError } from '../utils/ApiErrorHandler';
 
 const axiosClient = axios.create({
@@ -10,9 +10,9 @@ const axiosClient = axios.create({
 
 // Request Interceptor
 axiosClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
+  (config) => {
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -22,8 +22,8 @@ axiosClient.interceptors.request.use(
 
 // Response Interceptor
 axiosClient.interceptors.response.use(
-  (response) => response.data,
-  (error: AxiosError) => {
+  (response) => response,
+  (error) => {
     handleApiError(error);
     return Promise.reject(error);
   },

@@ -1,5 +1,5 @@
-import api from './axiosClient';
-import { handleApiError } from '../utils/utils';
+import api from './axios';
+import { handleApiError } from '../utils/ApiErrorHandler';
 
 export interface UserProfile {
   id: string;
@@ -9,8 +9,8 @@ export interface UserProfile {
 
 export const fetchProfile = async (): Promise<UserProfile | null> => {
   try {
-    const data = await api.get<UserProfile>('/users/me');
-    return data;
+    const response = await api.get<UserProfile>('/users/me');
+    return response.data;
   } catch (error) {
     handleApiError(error, 'Failed to load profile');
     return null; 

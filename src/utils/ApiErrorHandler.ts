@@ -1,18 +1,20 @@
-import { AxiosError } from 'axios';
+// utils/ApiErrorHandler.ts
 import { LOGIN_PATH } from '../constants/paths';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import type { CustomAxiosError } from '../types/errors';
 
-export const handleApiError = (error: unknown, customMessage?: string) => {
-  let message = 'Something went wrong. Please try again.';
+// Custom type guard
+function isAxiosError(error: unknown): error is CustomAxiosError {
+  return (error as CustomAxiosError)?.isAxiosError === true;
+}
 
-  if (customMessage) {
-    message = customMessage;
-  }
+export const handleApiError = (error: unknown, customMessage?: string): string => {
+  let message = customMessage || 'Something went wrong. Please try again.';
 
-  if (error instanceof AxiosError) {
+  if (isAxiosError(error)) {
     const status = error.response?.status;
-    const data = error.response?.data as { message?: string };
+    const data = error.response?.data;
 
     if (status) {
       switch (status) {
